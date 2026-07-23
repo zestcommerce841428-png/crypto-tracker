@@ -34,26 +34,42 @@ export function useLiveTicker(coinSymbols: string[]) {
     );
 
     setStatus("connecting");
+
+    // Each subscribed symbol ticks roughly once/sec independently, so a
+    // ticker strip with a dozen coins could trigger a dozen separate
+    // re-renders/sec. Buffer incoming ticks and flush at most once per
+    // animation frame instead of on every individual message.
+    let pending: Record<string, LiveTickerState> = {};
+    let rafId: number | null = null;
+
+    const flush = () => {
+      rafId = null;
+      if (Object.keys(pending).length === 0) return;
+      setTicks((prev) => ({ ...prev, ...pending }));
+      pending = {};
+    };
+
     const close = openBinanceCombinedTicker(
       binanceSymbols,
       (tick: LiveTick) => {
         const coinSymbol = symbolToCoin.get(tick.symbol.toUpperCase());
         if (!coinSymbol) return;
-        setTicks((prev) => ({
-          ...prev,
-          [coinSymbol]: {
-            price: Number(tick.price),
-            changePercent: Number(tick.changePercent),
-            high: Number(tick.high),
-            low: Number(tick.low),
-            volume: Number(tick.volume),
-          },
-        }));
+        pending[coinSymbol] = {
+          price: Number(tick.price),
+          changePercent: Number(tick.changePercent),
+          high: Number(tick.high),
+          low: Number(tick.low),
+          volume: Number(tick.volume),
+        };
+        if (rafId === null) rafId = requestAnimationFrame(flush);
       },
       setStatus
     );
 
-    return close;
+    return () => {
+      close();
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 

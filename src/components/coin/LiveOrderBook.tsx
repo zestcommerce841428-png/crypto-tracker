@@ -10,25 +10,23 @@ import { openBinanceDepthWs, binanceSymbolFor, type OrderBookSnapshot } from "@/
 import { formatCurrency } from "@/lib/utils/format";
 import { useGainLossColors } from "@/lib/hooks/useGainLossColors";
 
-export default function LiveOrderBook({ symbol }: { symbol: string }) {
-  const [book, setBook] = React.useState<OrderBookSnapshot | null>(null);
-  const { gain: gainColor, loss: lossColor } = useGainLossColors();
-  const binanceSymbol = binanceSymbolFor(symbol);
-
-  React.useEffect(() => {
-    setBook(null);
-    const close = openBinanceDepthWs(binanceSymbol, setBook);
-    return close;
-  }, [binanceSymbol]);
-
-  if (!book) return null;
-
-  const asks = [...book.asks].sort((a, b) => a.price - b.price).slice(0, 10).reverse();
-  const bids = [...book.bids].sort((a, b) => b.price - a.price).slice(0, 10);
-  const allQuantities = [...asks, ...bids].map((l) => l.quantity);
-  const maxQty = Math.max(...allQuantities, 1);
-
-  const Row = ({ price, quantity, color }: { price: number; quantity: number; color: string }) => (
+// Defined outside the component so it's a stable component type across
+// renders — previously this was declared inside LiveOrderBook's body,
+// which meant React treated it as a brand-new component type on every
+// render (the order book updates ~once/sec) and remounted all 20 rows
+// instead of just diffing their props.
+function OrderBookRow({
+  price,
+  quantity,
+  maxQty,
+  color,
+}: {
+  price: number;
+  quantity: number;
+  maxQty: number;
+  color: string;
+}) {
+  return (
     <Box sx={{ position: "relative", py: 0.25 }}>
       <Box
         sx={{
@@ -51,6 +49,24 @@ export default function LiveOrderBook({ symbol }: { symbol: string }) {
       </Stack>
     </Box>
   );
+}
+
+export default function LiveOrderBook({ symbol }: { symbol: string }) {
+  const [book, setBook] = React.useState<OrderBookSnapshot | null>(null);
+  const { gain: gainColor, loss: lossColor } = useGainLossColors();
+  const binanceSymbol = binanceSymbolFor(symbol);
+
+  React.useEffect(() => {
+    setBook(null);
+    const close = openBinanceDepthWs(binanceSymbol, setBook);
+    return close;
+  }, [binanceSymbol]);
+
+  if (!book) return null;
+
+  const asks = [...book.asks].sort((a, b) => a.price - b.price).slice(0, 10).reverse();
+  const bids = [...book.bids].sort((a, b) => b.price - a.price).slice(0, 10);
+  const maxQty = Math.max(...asks.map((l) => l.quantity), ...bids.map((l) => l.quantity), 1);
 
   return (
     <Paper variant="outlined" sx={{ p: 2 }}>
@@ -74,13 +90,13 @@ export default function LiveOrderBook({ symbol }: { symbol: string }) {
       </Typography>
       <Box>
         {asks.map((level) => (
-          <Row key={`ask-${level.price}`} price={level.price} quantity={level.quantity} color={lossColor} />
+          <OrderBookRow key={`ask-${level.price}`} price={level.price} quantity={level.quantity} maxQty={maxQty} color={lossColor} />
         ))}
       </Box>
       <Box sx={{ borderTop: 1, borderBottom: 1, borderColor: "divider", my: 0.5 }} />
       <Box>
         {bids.map((level) => (
-          <Row key={`bid-${level.price}`} price={level.price} quantity={level.quantity} color={gainColor} />
+          <OrderBookRow key={`bid-${level.price}`} price={level.price} quantity={level.quantity} maxQty={maxQty} color={gainColor} />
         ))}
       </Box>
     </Paper>

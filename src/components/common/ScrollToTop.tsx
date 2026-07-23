@@ -22,7 +22,16 @@ export default function ScrollToTop() {
   const reduceMotion = useAccessibilityStore((s) => s.reduceMotion);
 
   React.useEffect(() => {
-    const handleScroll = () => {
+    // Native "scroll" fires dozens of times per second during momentum
+    // scrolling; calling 3 setState updates on every single one of those
+    // events (as this used to) forces that many re-renders per second on
+    // every page in the app. Coalescing to one update per animation frame
+    // (browsers repaint at most once per frame anyway) fixes the jank
+    // without losing any visible responsiveness.
+    let rafId: number | null = null;
+
+    const measure = () => {
+      rafId = null;
       const top = window.scrollY;
       const height = document.documentElement.scrollHeight - window.innerHeight;
       setScrollTop(top);
@@ -30,12 +39,17 @@ export default function ScrollToTop() {
       setProgress(height > 0 ? (top / height) * 100 : 0);
     };
 
-    handleScroll();
+    const handleScroll = () => {
+      if (rafId === null) rafId = requestAnimationFrame(measure);
+    };
+
+    measure();
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
     };
   }, []);
 

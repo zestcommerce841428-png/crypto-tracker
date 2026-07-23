@@ -19,10 +19,31 @@ export default function LiveRecentTrades({ symbol }: { symbol: string }) {
 
   React.useEffect(() => {
     setTrades([]);
+
+    // High-volume pairs (BTC/USDT, ETH/USDT) can emit 10-50+ trades per
+    // *second* over this stream. Calling setState on every single one
+    // forced that many re-renders/sec — the main freeze culprit on coin
+    // detail pages. Buffer incoming trades in a ref and flush to state at
+    // most once per animation frame instead.
+    let pending: LiveTrade[] = [];
+    let rafId: number | null = null;
+
+    const flush = () => {
+      rafId = null;
+      if (pending.length === 0) return;
+      setTrades((prev) => [...pending.reverse(), ...prev].slice(0, MAX_TRADES));
+      pending = [];
+    };
+
     const close = openBinanceTradeWs(binanceSymbol, (trade) => {
-      setTrades((prev) => [trade, ...prev].slice(0, MAX_TRADES));
+      pending.push(trade);
+      if (rafId === null) rafId = requestAnimationFrame(flush);
     });
-    return close;
+
+    return () => {
+      close();
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
   }, [binanceSymbol]);
 
   if (trades.length === 0) return null;
