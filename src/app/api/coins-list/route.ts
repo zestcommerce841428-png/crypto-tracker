@@ -1,38 +1,20 @@
 import { NextResponse } from "next/server";
-import { getCoinsList, getMarkets } from "@/lib/api/coingecko";
+import { getCoinsList } from "@/lib/api/coingecko";
 
-// Serves the full ~16,000-coin list from a single cached endpoint so the
+// Serves the full ~17,000-coin list from a single cached endpoint so the
 // client fetches it once (long browser/CDN cache) instead of it being
 // re-embedded as a giant RSC payload on every /all-coins page render.
 //
-// CoinGecko's /coins/list has no image field at all, so we merge in icons
-// from /coins/markets (which does) for the ~1,000 top-ranked coins that
-// cover the vast majority of real traffic. Coins outside that ranked set
-// simply have no `image` and fall back to a letter avatar client-side.
+// Icons are deliberately NOT merged in here anymore — that used to require
+// several extra sequential CoinGecko calls in the same request, which
+// pushed this route's response time to ~9.4s, right at the edge of
+// Vercel's 10s function timeout. See /api/coin-images: the client fetches
+// the icon map separately and merges it in once it arrives, so a slow or
+// failed icon fetch can never block the base list from loading.
 export async function GET() {
   try {
-    const [coins, marketPages] = await Promise.all([
-      getCoinsList(),
-      Promise.all(
-        [1, 2, 3, 4].map((page) =>
-          getMarkets({ perPage: 250, page, sparkline: false }).catch(() => [])
-        )
-      ),
-    ]);
-
-    const imageById = new Map<string, string>();
-    for (const page of marketPages) {
-      for (const coin of page) {
-        imageById.set(coin.id, coin.image);
-      }
-    }
-
-    const withImages = coins.map((coin) => ({
-      ...coin,
-      image: imageById.get(coin.id),
-    }));
-
-    return NextResponse.json(withImages, {
+    const coins = await getCoinsList();
+    return NextResponse.json(coins, {
       headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" },
     });
   } catch (err) {

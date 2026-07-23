@@ -20,7 +20,6 @@ interface CoinListItem {
   id: string;
   symbol: string;
   name: string;
-  image?: string;
 }
 
 const LETTERS = ["#", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")];
@@ -42,6 +41,15 @@ export default function AllCoinsClient() {
   // list into every page's RSC payload and ballooning memory under load.
   const { data: coins, isLoading } = useSWR<CoinListItem[]>(
     "/api/coins-list",
+    fetcher,
+    { revalidateOnFocus: false, dedupingInterval: 3600000 }
+  );
+
+  // Fetched separately and merged in once it arrives so a slow/failed
+  // icon lookup never blocks the base list from rendering — coins outside
+  // the covered set fall back to CoinIcon's letter-avatar rendering.
+  const { data: imageMap } = useSWR<Record<string, string>>(
+    "/api/coin-images",
     fetcher,
     { revalidateOnFocus: false, dedupingInterval: 3600000 }
   );
@@ -123,7 +131,7 @@ export default function AllCoinsClient() {
                   "&:hover": { color: "primary.main" },
                 }}
               >
-                <CoinIcon src={coin.image} alt={coin.name} size={20} />
+                <CoinIcon src={imageMap?.[coin.id]} alt={coin.name} size={20} />
                 <Typography variant="body2" noWrap sx={{ minWidth: 0 }}>
                   {coin.name}{" "}
                   <Typography component="span" variant="caption" color="text.secondary">
