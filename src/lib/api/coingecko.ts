@@ -11,16 +11,17 @@ import type {
 const BASE_URL = "https://api.coingecko.com/api/v3";
 const API_KEY = process.env.COINGECKO_API_KEY;
 
-// `process.env.NEXT_PHASE` is NOT reliably set inside Turbopack's build
-// worker processes (confirmed: builds started failing faster after trying
-// to key retry budget off it), so this uses one bounded policy for both
-// build and runtime instead of guessing which phase we're in. Worst case
-// total wait is ~1 minute (well short of the 90-120s that caused pages to
-// feel frozen before), while still giving `next build` enough patience to
-// ride out CoinGecko's free-tier rate limit.
-const MAX_RETRIES = 6;
-const MAX_BACKOFF_MS = 8000;
-const REQUEST_TIMEOUT_MS = 10000;
+// Vercel's Hobby plan hard-kills serverless functions at 10s regardless of
+// what our own retry logic wants to do, so the previous budget (6 retries,
+// up to 8s backoff each) could run well past that ceiling and show up to
+// the client as a bare hang instead of a clean error. Tightened so a single
+// call's worst case fits inside that window; a page with 2+ sequential
+// calls (e.g. /treasury) can still occasionally lose the race under a
+// sustained rate-limit storm, but that now surfaces as the page's existing
+// `.catch()` fallback rather than a dangling connection.
+const MAX_RETRIES = 2;
+const MAX_BACKOFF_MS = 2500;
+const REQUEST_TIMEOUT_MS = 4000;
 
 // Free-tier CoinGecko allows roughly 10-30 req/min per IP. We serialize
 // outbound requests with a minimum gap so a burst of concurrent server
