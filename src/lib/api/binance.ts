@@ -32,6 +32,25 @@ export interface BinanceKline {
   closeTime: number;
 }
 
+// Every USDT trading pair's 24h stats in a single call — this is what makes
+// Binance viable as a *primary* data source instead of just a live-price
+// supplement: one request covers thousands of pairs, versus CoinGecko's
+// free tier needing one paginated /coins/markets call per ~100-250 coins
+// and a much stingier rate limit.
+export async function getBinanceAllUsdtTickers(): Promise<BinanceTicker24h[]> {
+  try {
+    const res = await fetch(`${BINANCE_BASE}/ticker/24hr`, {
+      next: { revalidate: 30 },
+      signal: timeoutSignal(8000),
+    });
+    if (!res.ok) return [];
+    const all: BinanceTicker24h[] = await res.json();
+    return all.filter((t) => t.symbol.endsWith("USDT") && Number(t.lastPrice) > 0);
+  } catch {
+    return [];
+  }
+}
+
 export async function getBinanceTicker24h(
   symbol: string
 ): Promise<BinanceTicker24h | null> {

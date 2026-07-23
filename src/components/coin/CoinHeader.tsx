@@ -17,6 +17,7 @@ import { useSettingsStore } from "@/lib/store/useSettingsStore";
 import { useAccessibilityStore } from "@/lib/store/useAccessibilityStore";
 import { useLiveTicker } from "@/lib/hooks/useLiveTicker";
 import { speakText } from "@/lib/utils/speech";
+import ShareButton from "@/components/common/ShareButton";
 
 export default function CoinHeader({
   id,
@@ -110,6 +111,7 @@ export default function CoinHeader({
               </IconButton>
             </Tooltip>
           )}
+          <ShareButton url={`/coin/${id}`} title={`${name} (${symbol.toUpperCase()}) price`} />
         </Stack>
         <Stack direction="row" alignItems="baseline" spacing={1.5} sx={{ mt: 0.5 }}>
           <Typography variant="h4" sx={{ fontWeight: 800, fontVariantNumeric: "tabular-nums" }}>

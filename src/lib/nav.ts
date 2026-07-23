@@ -10,7 +10,7 @@ export interface NavGroup {
 }
 
 export const primaryNav: NavItem[] = [
-  { label: "Dashboard", href: "/" },
+  { label: "Dashboard", href: "/dashboard" },
   { label: "Markets", href: "/markets" },
   { label: "Watchlist", href: "/watchlist" },
   { label: "Portfolio", href: "/portfolio" },
@@ -62,7 +62,7 @@ export const footerNavGroups: NavGroup[] = [
   {
     label: "Product",
     items: [
-      { label: "Dashboard", href: "/" },
+      { label: "Dashboard", href: "/dashboard" },
       { label: "Markets", href: "/markets" },
       { label: "Portfolio", href: "/portfolio" },
       { label: "Watchlist", href: "/watchlist" },

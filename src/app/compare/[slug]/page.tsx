@@ -9,6 +9,7 @@ import Avatar from "@mui/material/Avatar";
 import { getMarkets } from "@/lib/api/coingecko";
 import { formatCurrency, formatCompactNumber, formatSupply } from "@/lib/utils/format";
 import PriceChangeChip from "@/components/common/PriceChangeChip";
+import ShareButton from "@/components/common/ShareButton";
 
 export const revalidate = 90;
 export const dynamicParams = true;
@@ -73,13 +74,16 @@ export default async function ComparePairPage({
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
-      <Stack spacing={0.5} sx={{ mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800 }}>
-          {coinA.name} vs {coinB.name}
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Live comparison of price, market cap, volume and supply.
-        </Typography>
+      <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 3 }}>
+        <Stack spacing={0.5}>
+          <Typography variant="h4" sx={{ fontWeight: 800 }}>
+            {coinA.name} vs {coinB.name}
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Live comparison of price, market cap, volume and supply.
+          </Typography>
+        </Stack>
+        <ShareButton title={`${coinA.name} vs ${coinB.name} — CryptoTracker`} />
       </Stack>
 
       <Grid container spacing={2}>

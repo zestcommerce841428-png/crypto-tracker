@@ -14,7 +14,7 @@ import AccountBalanceWalletRoundedIcon from "@mui/icons-material/AccountBalanceW
 import NewspaperRoundedIcon from "@mui/icons-material/NewspaperRounded";
 
 const items = [
-  { label: "Home", href: "/", icon: <HomeRoundedIcon /> },
+  { label: "Home", href: "/dashboard", icon: <HomeRoundedIcon /> },
   { label: "Markets", href: "/markets", icon: <BarChartRoundedIcon /> },
   { label: "Watchlist", href: "/watchlist", icon: <StarRoundedIcon /> },
   { label: "Portfolio", href: "/portfolio", icon: <AccountBalanceWalletRoundedIcon /> },

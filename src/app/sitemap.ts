@@ -6,6 +6,7 @@ import { siteUrl } from "@/lib/utils/site-url";
 
 const staticRoutes = [
   "",
+  "/dashboard",
   "/markets",
   "/watchlist",
   "/portfolio",
