@@ -15,6 +15,7 @@ import LiveTickerStrip from "@/components/coin/LiveTickerStrip";
 import HomeMarketData from "./HomeMarketData";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
 const FEATURES = [

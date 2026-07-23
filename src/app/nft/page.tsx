@@ -13,6 +13,7 @@ import Chip from "@mui/material/Chip";
 import { getNftsList } from "@/lib/api/coingecko";
 import LinkTableRow from "@/components/common/LinkTableRow";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 600;
 
 export const metadata: Metadata = {

@@ -8,6 +8,7 @@ import StatCard from "@/components/common/StatCard";
 import { formatCompactNumber } from "@/lib/utils/format";
 import CoinMarketsTable from "@/components/coin/CoinMarketsTable";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 600;
 
 export const metadata: Metadata = {

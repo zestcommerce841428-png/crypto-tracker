@@ -10,6 +10,7 @@ import { formatCurrency } from "@/lib/utils/format";
 import PriceChangeChip from "@/components/common/PriceChangeChip";
 import LinkCard from "@/components/common/LinkCard";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 180;
 
 export const metadata: Metadata = {

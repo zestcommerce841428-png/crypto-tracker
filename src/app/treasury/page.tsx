@@ -14,6 +14,7 @@ import Chip from "@mui/material/Chip";
 import { getCompanyTreasury } from "@/lib/api/coingecko";
 import { formatCompactNumber, formatCurrency } from "@/lib/utils/format";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {

@@ -15,6 +15,7 @@ import { getExchanges } from "@/lib/api/coingecko";
 import { formatCompactNumber } from "@/lib/utils/format";
 import LinkTableRow from "@/components/common/LinkTableRow";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 600;
 
 export const metadata: Metadata = {

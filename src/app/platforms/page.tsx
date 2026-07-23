@@ -9,6 +9,7 @@ import { BLOCKCHAIN_NETWORKS } from "@/lib/data/popularCoins";
 import { getAssetPlatforms } from "@/lib/api/coingecko";
 import LinkCard from "@/components/common/LinkCard";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {

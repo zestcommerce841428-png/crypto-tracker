@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import { getMarkets } from "@/lib/api/coingecko";
 import CoinMarketsTable from "@/components/coin/CoinMarketsTable";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 300;
 
 export const metadata: Metadata = {

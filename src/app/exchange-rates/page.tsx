@@ -12,6 +12,7 @@ import Paper from "@mui/material/Paper";
 import Chip from "@mui/material/Chip";
 import { getExchangeRates } from "@/lib/api/coingecko";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 600;
 
 export const metadata: Metadata = {

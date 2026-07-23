@@ -7,6 +7,7 @@ import { VS_CURRENCIES, CURRENCY_LABELS, currencySymbol } from "@/lib/utils/form
 import { getSupportedVsCurrencies } from "@/lib/api/coingecko";
 import LinkCard from "@/components/common/LinkCard";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {

@@ -9,6 +9,7 @@ import Chip from "@mui/material/Chip";
 import Alert from "@mui/material/Alert";
 import { timeAgo } from "@/lib/utils/format";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 300;
 
 export const metadata: Metadata = {

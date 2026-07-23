@@ -6,6 +6,7 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {

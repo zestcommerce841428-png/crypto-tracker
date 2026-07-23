@@ -6,6 +6,7 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import HalvingCountdown from "./HalvingCountdown";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 600;
 
 export const metadata: Metadata = {
