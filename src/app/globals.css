@@ -27,3 +27,13 @@ a {
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
+.hero-gradient {
+  background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(56, 97, 251, 0.12), transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  .hero-gradient {
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(56, 97, 251, 0.25), transparent);
+  }
+}

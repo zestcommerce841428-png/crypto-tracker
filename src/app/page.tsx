@@ -86,16 +86,7 @@ export default async function LandingPage() {
   return (
     <Box>
       {/* Hero */}
-      <Box
-        sx={{
-          borderBottom: 1,
-          borderColor: "divider",
-          background: (theme) =>
-            theme.palette.mode === "dark"
-              ? "radial-gradient(ellipse 80% 60% at 50% -10%, rgba(56,97,251,0.25), transparent)"
-              : "radial-gradient(ellipse 80% 60% at 50% -10%, rgba(56,97,251,0.12), transparent)",
-        }}
-      >
+      <Box className="hero-gradient" sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 }, textAlign: "center" }}>
           <Chip label="Live on Binance + CoinGecko data" color="primary" variant="outlined" sx={{ mb: 3 }} />
           <Typography
